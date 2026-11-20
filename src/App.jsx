@@ -1,9 +1,7 @@
 import { useState } from "react";
-import heroImg from "./assets/hero.png";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
 import "./App.css";
 import Card from "./Card";
+import TypeButton from "./TypeButton";
 
 const pokemons = [
   { id: 1, name: "Bulbasaur", type: "Grass", hp: 45, attack: 49 },
@@ -28,126 +26,77 @@ const pokemons = [
   { id: 148, name: "Dragonair", type: "Dragon", hp: 61, attack: 84 },
 ];
 
+const types = [...new Set(pokemons.map((p) => p.type))];
+
 // Sprite image URL pattern:
 // `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [selectedType, setSelectedType] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+
+  const toggleFavorite = (id) => {
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id],
+    );
+  };
+
+  // The cards to show, depending on the selected button
+  const shownPokemons = pokemons.filter((pokemon) => {
+    if (selectedType === null) return true; // All
+    if (selectedType === "Favorites") return favorites.includes(pokemon.id); // Favourites
+    return pokemon.type === selectedType; // one type
+  });
 
   return (
     <>
       <section id="center">
         <div>
-          <h1>Pokémon card selector</h1>
-          {/*           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p> */}
+          <h1>Pokémon explorer</h1>
         </div>
-        {/*         <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button> */}
-      </section>
-
-      {/* <div className="ticks"></div> */}
-
-      <section id="pokemon-list">
-        {/*<h2>Pokémon</h2>*/}
-        <div className="card-grid">
-          {pokemons.map((pokemon) => (
-            <Card key={pokemon.id} pokemon={pokemon} />
+        <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+          <TypeButton
+            type="All"
+            isSelected={selectedType === null}
+            onClick={() => setSelectedType(null)}
+          />
+          <TypeButton
+            type="Favorites"
+            isSelected={selectedType === "Favorites"}
+            onClick={() => setSelectedType("Favorites")}
+          />
+          {types.map((type) => (
+            <TypeButton
+              key={type}
+              type={type}
+              isSelected={selectedType === type}
+              onClick={() => setSelectedType(type)}
+            />
           ))}
         </div>
       </section>
 
-      {/*       <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
+      <section id="pokemon-list">
+        {/*<h2>Pokémon</h2>*/}
+        {shownPokemons.length === 0 ? (
+          <p className="empty-message">
+            {selectedType === "Favorites"
+              ? "No favourites yet – click ☆ on a card."
+              : "No Pokémon found."}
+          </p>
+        ) : (
+          <div className="card-grid">
+            {shownPokemons.map((pokemon) => (
+              <Card
+                key={pokemon.id}
+                pokemon={pokemon}
+                isFavorite={favorites.includes(pokemon.id)}
+                onClick={() => toggleFavorite(pokemon.id)}
+              />
+            ))}
+          </div>
+        )}
       </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section> */}
     </>
   );
 }

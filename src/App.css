@@ -1,68 +1,9 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
-
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
 #center {
   display: flex;
   flex-direction: column;
   gap: 25px;
   place-content: center;
   place-items: center;
-  flex-grow: 1;
 
   @media (max-width: 1024px) {
     padding: 32px 20px 24px;
@@ -70,117 +11,9 @@
   }
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
-  width: 100%;
-
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+/* The card section takes the leftover height, so the header never moves */
+#pokemon-list {
+  flex-grow: 1;
 }
 
 .card-grid {
@@ -193,40 +26,50 @@
 .card {
   aspect-ratio: 5 / 7; /* taller than wide, like a trading card */
   display: flex;
-  flex-direction: column; /* image + name, then the bottom row */
-  padding: 12px;
-  border: 1px solid #999; /* thin grey edge */
+  flex-direction: column; /* header, body, bottom stacked */
+  padding: 0; /* the three parts have their own padding */
+  border: 3px solid var(--type-color, #a8a8a8); /* edge in the type colour */
   border-radius: 12px;
+  overflow: hidden; /* clip the coloured parts to the rounded corners */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  color: #2b2b2b; /* very dark grey for all text on the card */
-  background: #a8a8a8; /* fallback: grey */
+  color: #fff; /* white text in the coloured header and bottom */
+  background: #fff;
 }
 
-/* One plain background colour per type */
-.card--grass {
-  background: #5cbf6a;
+/* Header and bottom: the gradient if there is one, otherwise the type colour, otherwise grey */
+.card-header,
+.card-bottom {
+  background: var(--type-bg, var(--type-color, #a8a8a8));
+  padding: 8px 12px;
 }
-.card--fire {
-  background: #f0625a;
+
+/* One colour per type, stored in a variable. Cards and buttons both read it. */
+.type--grass {
+  --type-color: #5cbf6a;
 }
-.card--water {
-  background: #5b9ee8;
+.type--fire {
+  --type-color: #f0625a;
 }
-.card--lightning {
-  background: #f5d33f;
+.type--water {
+  --type-color: #5b9ee8;
 }
-.card--psychic {
-  background: #b57ed9;
+.type--lightning {
+  --type-color: #f5d33f;
 }
-.card--fighting {
-  background: #c08a55;
+.type--psychic {
+  --type-color: #b57ed9;
 }
-.card--normal {
-  background: #d1d0d0;
+.type--fighting {
+  --type-color: #c08a55;
 }
-/* Dragon and fairy: rainbow */
-.card--multicolor {
-  background: linear-gradient(
+.type--normal {
+  --type-color: #d1d0d0;
+}
+/* Dragon and fairy: a gradient can't be a border or text colour,
+   so there is one plain colour (for border/text) and a rainbow (for backgrounds) */
+.type--multicolor {
+  --type-color: #b57ed9;
+  --type-bg: linear-gradient(
     135deg,
     #f0625a,
     #f5d33f,
@@ -234,6 +77,21 @@
     #5b9ee8,
     #b57ed9
   );
+  --type-hover: linear-gradient(
+    135deg,
+    color-mix(in srgb, #f0625a 25%, #fff),
+    color-mix(in srgb, #f5d33f 25%, #fff),
+    color-mix(in srgb, #5cbf6a 25%, #fff),
+    color-mix(in srgb, #5b9ee8 25%, #fff),
+    color-mix(in srgb, #b57ed9 25%, #fff)
+  );
+}
+.type--all {
+  --type-color: #888888;
+}
+.type--favorites {
+  --type-color: #ff69b4;
+  margin-right: 25px;
 }
 
 /* Image and name fill the space above the bottom row */
@@ -243,9 +101,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: #fff;
+  padding: 12px;
 
   img {
-    width: 90%; /* grow with the card */
+    width: 80%; /* grow with the card */
     height: auto;
     image-rendering: pixelated; /* keep the small pixel-art sprites sharp when enlarged */
   }
@@ -253,7 +113,7 @@
   h3 {
     margin: 4px 0 0;
     font-size: 18px;
-    color: inherit; /* use the card's text colour */
+    color: var(--type-color, #2b2b2b); /* name in the type colour, dark grey as fallback */
   }
 }
 
@@ -263,4 +123,60 @@
   justify-content: space-between;
   font-size: 14px;
   font-weight: 600;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Unselected button: white, with border and text in the type colour */
+.type-button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 2px solid var(--type-color, #888888);
+  background: #fff;
+  background-origin: border-box; /* a gradient covers the border area too, so it doesn't repeat */
+  color: var(--type-color, #888888);
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    transform 0.2s; /* animate the change smoothly */
+}
+
+/* Selected button: filled with the type colour (or rainbow), white text */
+.type-button.selected {
+  background: var(--type-bg, var(--type-color, #888888));
+  background-origin: border-box;
+  color: #fff;
+  transform: scale(1.15); /* 15% bigger */
+}
+
+/* Hover on unselected buttons: the light rainbow if there is one,
+   otherwise a light tint of the type colour */
+.type-button:not(.selected):hover {
+  background: var(
+    --type-hover,
+    color-mix(in srgb, var(--type-color, #888888) 25%, #fff)
+  );
+  background-origin: border-box; /* the shorthand resets it, so set it again */
+}
+
+.favorite-button {
+  background: none;
+  border: none;
+  color: inherit; /* white, like the rest of the header */
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Shown instead of the grid when no cards match */
+.empty-message {
+  padding: 48px 16px;
+  color: var(--text);
 }
